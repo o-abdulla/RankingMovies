@@ -35,10 +35,24 @@ main {
     margin-left: 3px
 }
 
-.unranked-cell img{
+.unranked-cell img, .rank-cell img{
     width: 100%;
     height: 100%;
 }
+
+.rank-cell {
+    width: 80px;
+    height: 100px; /* Set height to ensure it’s a proper drop target */
+    border: 2px solid #ccc; /* Optional: border to visualize */
+    pointer-events: all;
+}
+
+.rank-cell:hover {
+    background-color: #f0f0f0;
+    border: 2px dashed #999; /* Visual indication of drop target */
+}
+
+
 
 .rankings {
     width: 800px;
