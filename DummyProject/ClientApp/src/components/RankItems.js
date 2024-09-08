@@ -1,11 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import MovieImageArr from "./MovieImages.js";
 import RankingGrid from "./RankingGrid";
+import ItemCollection from "./ItemCollection";
 
-const RankItems = () => {
-
-    const [items, setItems] = useState([]);
-    const dataType = 1;
+const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
 
     function drag(ev) {
         ev.dataTransfer.setData("text", ev.target.id);
@@ -32,6 +30,20 @@ const RankItems = () => {
 
 
     useEffect(() => {
+
+        if (items == null) {
+            getDataFromApi();
+        }
+        
+    }, [dataType])
+
+    useEffect(() => {
+        if (items != null) {
+            localStorage.setItem(localStorageKey, JSON.stringify(items));
+        }
+    }, [items])
+
+    function getDataFromApi() {
         fetch(`item/${dataType}`)
             .then((results) => {
                 return results.json();
@@ -39,23 +51,15 @@ const RankItems = () => {
             .then(data => {
                 setItems(data);
             })
-    },[])
+    }
 
     return (
+        (items != null)?
         <main>
-            <RankingGrid items={items} imgArr={MovieImageArr} drag={drag} allowDrop={allowDrop} drop={drop} />
-            <div className = "items-not-ranked">
-                {
-                    (items.length > 0) ? items.map((item) =>
-                        <div className = "unranked-cell">
-                            <img id={`item-${item.id}`} src={MovieImageArr.find(o => o.id === item.imageId)?.image}
-                                style={{cursor: "pointer"}} draggable="true" onDragStart={drag}
-                            />
-                        </div>
-                    ) : <div>Loading...</div>
-                }
-            </div>
-        </main>
+            <RankingGrid items={items} imgArr={imgArr} drag={drag} allowDrop={allowDrop} drop={drop} />
+            <ItemCollection items={items} drag={drag} imgArr={imgArr} />
+            </main>
+        : <main>Loading...</main>
     )
 }
 
